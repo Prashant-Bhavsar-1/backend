@@ -1,12 +1,25 @@
 // require('dotenv').config() we can use this but is will give you bad coding consistency cause we use module type not using commonJS
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
+import { app } from "./app.js";
 
 dotenv.config({
   path: "./env",
 });
 
-connectDB();
+connectDB()
+  .then(() => {
+    app.on("Error ", (error) => {
+      console.log("Err : ", error);
+      throw error;
+    });
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`Server is listening on ${process.env.PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MONGODB connection failed !!! ", err);
+  });
 
 /*
 1). This is the first approch of connecting the database to the index.
